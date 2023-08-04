@@ -7,6 +7,8 @@ import {
   Put,
   Param,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { CreateCatDto, UpdateCatDto, ListAllEntities } from './cats.dto';
 import { CatsService } from './cats.service';
@@ -27,8 +29,17 @@ export class CatsController {
   // }
 
   @Get()
-  async findAll(): Promise<Cat[]> {
-    return this.catsService.findAll();
+  async findAll() {
+    try {
+      await this.catsService.findAll()
+    } catch (error) { 
+      throw new HttpException({
+        status: HttpStatus.FORBIDDEN,
+        error: 'This is a custom message',
+      }, HttpStatus.FORBIDDEN, {
+        cause: error
+      });
+    }
   }
 
   @Get(':id')
@@ -45,4 +56,5 @@ export class CatsController {
   remove(@Param('id') id: string) {
     return `This action removes a #${id} cat`;
   }
+  
 }
