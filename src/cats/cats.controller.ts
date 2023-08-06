@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Query,
   Post,
   Body,
   Put,
@@ -9,10 +8,10 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
-import { CreateCatDto, UpdateCatDto, ListAllEntities } from './cats.dto';
+import { CreateCatDto, UpdateCatDto } from './cats.dto';
 import { CatsService } from './cats.service';
-import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
@@ -31,20 +30,24 @@ export class CatsController {
   @Get()
   async findAll() {
     try {
-      await this.catsService.findAll()
-    } catch (error) { 
-      throw new HttpException({
-        status: HttpStatus.FORBIDDEN,
-        error: 'This is a custom message',
-      }, HttpStatus.FORBIDDEN, {
-        cause: error
-      });
+      return await this.catsService.findAll();
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'This is a custom message',
+        },
+        HttpStatus.FORBIDDEN,
+        {
+          cause: error,
+        },
+      );
     }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return `This action returns a #${id} cat`;
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.catsService.findOne(id);
   }
 
   @Put(':id')
@@ -56,5 +59,4 @@ export class CatsController {
   remove(@Param('id') id: string) {
     return `This action removes a #${id} cat`;
   }
-  
 }
