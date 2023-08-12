@@ -6,6 +6,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUser } from './dto/update-user.dto';
 
+const select = {
+  id: true,
+  username: true,
+  email: true,
+  bio: true,
+  image: true,
+};
+
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
@@ -78,6 +86,21 @@ export class UserService {
         bio: true,
         image: true,
       },
+    });
+
+    if (!user) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+  }
+
+  async getUserByUsername(username: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        username,
+      },
+      select,
     });
 
     if (!user) {
