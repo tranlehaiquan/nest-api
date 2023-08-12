@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { randomBytes, pbkdf2Sync } from 'crypto';
+import * as jwt from 'jsonwebtoken';
 import { PrismaService } from '../database/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUser } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -56,7 +58,66 @@ export class UserService {
         HttpStatus.UNAUTHORIZED,
       );
     }
+    const token = this.generateJWT(user);
 
-    return result;
+    return {
+      ...result,
+      token,
+    };
+  }
+
+  async getUserById(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        bio: true,
+        image: true,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+  }
+
+  async updateUserById(id: number, data: UpdateUser) {
+    const user = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        bio: true,
+        image: true,
+      },
+    });
+
+    return user;
+  }
+
+  public generateJWT(user) {
+    const today = new Date();
+    const exp = new Date(today);
+    exp.setDate(today.getDate() + 60);
+
+    return jwt.sign(
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        exp: exp.getTime() / 1000,
+      },
+      process.env.JWT_SECRET,
+    );
   }
 }
