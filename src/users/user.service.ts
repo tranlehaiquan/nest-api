@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import { PrismaService } from '../database/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { UpdateUser } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 const select = {
   id: true,
@@ -110,7 +110,7 @@ export class UserService {
     return user;
   }
 
-  async updateUserById(id: number, data: UpdateUser) {
+  async updateUserById(id: number, data: UpdateUserDto) {
     const user = await this.prisma.user.update({
       where: {
         id,
