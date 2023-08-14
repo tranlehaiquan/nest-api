@@ -6,10 +6,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth.guard';
-import { CurrentUser } from 'src/decorator/user.decorator';
+import { AuthIsOptional, CurrentUser } from 'src/decorator/user.decorator';
 import { UserService } from 'src/users/user.service';
 
+@ApiTags('profiles')
 @Controller('profiles')
 export class ProfilesController {
   // inject UserService
@@ -17,20 +19,25 @@ export class ProfilesController {
 
   // get :username
   @Get(':username')
-  async getProfileUser(@Param('username') username: string) {
+  @AuthIsOptional()
+  @UseGuards(AuthGuard)
+  async getProfileUser(
+    @Param('username') username: string,
+    @CurrentUser() user,
+  ) {
     // TODO return isFollowed
-    return this.userService.getUserByUsername(username);
+    return this.userService.getProfileUser(username, user?.id);
   }
 
   @Post()
   @UseGuards(AuthGuard)
-  followUser(@CurrentUser() user) {
+  async followUser(@CurrentUser() user) {
     return user;
   }
 
   @Delete()
   @UseGuards(AuthGuard)
-  unFollowUser(@CurrentUser() user) {
+  async unFollowUser(@CurrentUser() user) {
     return user;
   }
 }

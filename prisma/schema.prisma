@@ -13,14 +13,16 @@ model accounts {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  username String @unique
-  bio      String @default("")
-  image    String?
-  salt     String
-  hash     String
-  posts    Post[]
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  username   String    @unique
+  bio        String    @default("")
+  image      String?
+  salt       String
+  hash       String
+  posts      Post[]
+  followedBy Follows[] @relation("following")
+  following  Follows[] @relation("follower")
 }
 
 model Post {
@@ -29,8 +31,8 @@ model Post {
   description String?
   body        String
   published   Boolean? @default(false)
-  author      User?    @relation(fields: [authorId], references: [id])
-  authorId    Int?
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    Int
   slug        String
 }
 
@@ -40,4 +42,13 @@ model Tag {
   name        String
   description String
   slug        String
+}
+
+model Follows {
+  follower    User @relation("follower", fields: [followerId], references: [id])
+  followerId  Int
+  following   User @relation("following", fields: [followingId], references: [id])
+  followingId Int
+
+  @@id([followerId, followingId])
 }

@@ -1,8 +1,12 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import * as jwt from 'jsonwebtoken';
+import { IS_AUTH_OPTIONAL } from './decorator/user.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
@@ -14,7 +18,12 @@ export class AuthGuard implements CanActivate {
 
       return !!decode;
     } catch (err: any) {
-      return false;
+      const isOptional = this.reflector.getAllAndOverride<boolean>(
+        IS_AUTH_OPTIONAL,
+        [context.getHandler(), context.getClass()],
+      );
+
+      return !!isOptional;
     }
   }
 }

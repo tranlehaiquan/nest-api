@@ -128,6 +128,44 @@ export class UserService {
     return user;
   }
 
+  async getProfileUser(username: string, currentUser?: string) {
+    let isFollowed = false;
+    const user = await this.prisma.user.findUnique({
+      where: {
+        username,
+      },
+      select: {
+        ...select,
+      },
+    });
+
+    console.log(user);
+
+    if (currentUser) {
+      const follower = await this.prisma.follows.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: +currentUser,
+            followingId: user.id,
+          },
+        },
+      });
+
+      if (follower) {
+        isFollowed = true;
+      }
+    }
+
+    if (!user) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+
+    return {
+      ...user,
+      isFollowed,
+    };
+  }
+
   public generateJWT(user) {
     const today = new Date();
     const exp = new Date(today);
