@@ -166,6 +166,26 @@ export class UserService {
     };
   }
 
+  async followUser(data: { followerId: string; followingId: string }) {
+    return await this.prisma.follows.create({
+      data: {
+        followerId: +data.followerId,
+        followingId: +data.followingId,
+      },
+    });
+  }
+
+  async unFollowUser(data: { followerId: string; followingId: string }) {
+    return await this.prisma.follows.delete({
+      where: {
+        followerId_followingId: {
+          followerId: +data.followerId,
+          followingId: +data.followingId,
+        },
+      },
+    });
+  }
+
   public generateJWT(user) {
     const today = new Date();
     const exp = new Date(today);

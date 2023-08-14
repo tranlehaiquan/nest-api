@@ -29,15 +29,21 @@ export class ProfilesController {
     return this.userService.getProfileUser(username, user?.id);
   }
 
-  @Post()
+  @Post(':userId')
   @UseGuards(AuthGuard)
-  async followUser(@CurrentUser() user) {
-    return user;
+  async followUser(@CurrentUser() user, @Param('userId') userId: string) {
+    return this.userService.followUser({
+      followerId: user.id,
+      followingId: userId,
+    });
   }
 
-  @Delete()
+  @Delete(':userId')
   @UseGuards(AuthGuard)
-  async unFollowUser(@CurrentUser() user) {
-    return user;
+  async unFollowUser(@CurrentUser() user, @Param('userId') userId: string) {
+    return this.userService.unFollowUser({
+      followerId: user.id,
+      followingId: userId,
+    });
   }
 }
