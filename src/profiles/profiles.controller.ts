@@ -25,7 +25,6 @@ export class ProfilesController {
     @Param('username') username: string,
     @CurrentUser() user,
   ) {
-    // TODO return isFollowed
     return this.userService.getProfileUser(username, user?.id);
   }
 

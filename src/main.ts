@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle('Realworld')
     .setDescription('The realworld API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);

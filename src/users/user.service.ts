@@ -24,6 +24,17 @@ export class UserService {
     const salt = randomBytes(16).toString('hex');
     const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
+    // query user with email
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (user) {
+      throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
+    }
+
     const newUser = await this.prisma.user.create({
       data: {
         username,
@@ -74,7 +85,7 @@ export class UserService {
     };
   }
 
-  async getUserById(id: number) {
+  async getUserById(id: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
@@ -110,7 +121,7 @@ export class UserService {
     return user;
   }
 
-  async updateUserById(id: number, data: UpdateUserDto) {
+  async updateUserById(id: string, data: UpdateUserDto) {
     const user = await this.prisma.user.update({
       where: {
         id,
@@ -145,7 +156,7 @@ export class UserService {
       const follower = await this.prisma.follows.findUnique({
         where: {
           followerId_followingId: {
-            followerId: +currentUser,
+            followerId: currentUser,
             followingId: user.id,
           },
         },
@@ -169,8 +180,8 @@ export class UserService {
   async followUser(data: { followerId: string; followingId: string }) {
     return await this.prisma.follows.create({
       data: {
-        followerId: +data.followerId,
-        followingId: +data.followingId,
+        followerId: data.followerId,
+        followingId: data.followingId,
       },
     });
   }
@@ -179,8 +190,8 @@ export class UserService {
     return await this.prisma.follows.delete({
       where: {
         followerId_followingId: {
-          followerId: +data.followerId,
-          followingId: +data.followingId,
+          followerId: data.followerId,
+          followingId: data.followingId,
         },
       },
     });

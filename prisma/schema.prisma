@@ -8,12 +8,8 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model accounts {
-  user_id Int @id @default(autoincrement())
-}
-
 model User {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(uuid())
   email      String    @unique
   username   String    @unique
   bio        String    @default("")
@@ -26,29 +22,31 @@ model User {
 }
 
 model Post {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   title       String
   description String?
   body        String
   published   Boolean? @default(false)
   author      User     @relation(fields: [authorId], references: [id])
-  authorId    Int
-  slug        String
+  authorId    String
+  slug        String   @unique
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
 }
 
 // Tag
 model Tag {
-  id          Int    @id @default(autoincrement())
-  name        String
+  id          String @id @default(uuid())
+  name        String @unique
   description String
   slug        String
 }
 
 model Follows {
-  follower    User @relation("follower", fields: [followerId], references: [id])
-  followerId  Int
-  following   User @relation("following", fields: [followingId], references: [id])
-  followingId Int
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
 
   @@id([followerId, followingId])
 }
