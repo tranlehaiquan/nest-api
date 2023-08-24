@@ -1,4 +1,4 @@
-import { IsString, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateArticle {
@@ -14,8 +14,8 @@ export class CreateArticle {
   @IsString()
   body: string;
 
-  // list of uuid
-  // @IsUUID('4', { each: true })
-  // @IsOptional()
-  // tagList: string[];
+  @ApiProperty()
+  @IsString({ each: true })
+  @IsOptional()
+  tags: string[];
 }

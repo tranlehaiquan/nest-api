@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TagsService } from './tags.service';
 import { CreateTag } from './dto/create-tags.dto';
 import { AuthGuard } from 'src/auth.guard';
@@ -16,6 +16,7 @@ export class TagsController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   async create(@Body() createTag: CreateTag) {
     return await this.tagsService.createTag(createTag);
   }

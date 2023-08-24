@@ -41,18 +41,44 @@ export class ArticlesService {
         authorId: true,
         slug: true,
         createdAt: true,
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
   }
 
   createArticle(data: CreateArticle, authorId: string) {
     const slug = stringToSlugWithRandomNumber(data.title);
+    const { tags, ...rest } = data;
 
     return this.prisma.post.create({
       data: {
-        ...data,
+        ...rest,
         slug,
         authorId,
+        tags: {
+          connectOrCreate: tags.map((tag) => ({
+            where: { name: tag },
+            create: {
+              name: tag,
+              slug: stringToSlugWithRandomNumber(tag),
+              description: tag,
+            },
+          })),
+        },
+      },
+      select: {
+        id: true,
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
   }

@@ -10,6 +10,7 @@ export class TagsService {
   async getTags() {
     return this.prismaService.tag.findMany({
       select: {
+        id: true,
         name: true,
         slug: true,
       },

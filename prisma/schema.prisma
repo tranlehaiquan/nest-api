@@ -19,27 +19,31 @@ model User {
   posts      Post[]
   followedBy Follows[] @relation("following")
   following  Follows[] @relation("follower")
+  comment    Comment[]
 }
 
 model Post {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   description String?
   body        String
-  published   Boolean? @default(false)
-  author      User     @relation(fields: [authorId], references: [id])
+  published   Boolean?  @default(false)
+  author      User      @relation(fields: [authorId], references: [id])
   authorId    String
-  slug        String   @unique
-  updatedAt   DateTime @updatedAt
-  createdAt   DateTime @default(now())
+  slug        String    @unique
+  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime  @default(now())
+  tags        Tag[]
+  comment     Comment[]
 }
 
 // Tag
 model Tag {
-  id          String @id @default(uuid())
-  name        String @unique
+  id          String  @id @default(uuid())
+  name        String  @unique
   description String
   slug        String
+  post        Post[]
 }
 
 model Follows {
@@ -49,4 +53,16 @@ model Follows {
   followingId String
 
   @@id([followerId, followingId])
+}
+
+// comments
+model Comment {
+  id        String   @id @default(uuid())
+  body      String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }
