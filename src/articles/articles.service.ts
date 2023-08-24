@@ -4,6 +4,13 @@ import { CreateArticle } from './dto/create-articles.dto';
 import { stringToSlugWithRandomNumber } from 'src/utils/stringToSlug';
 import { UpdateArticle } from './dto/update-articles.dto';
 
+type QueryArticle = {
+  tag?: string;
+  author?: string;
+  limit?: number;
+  offset?: number;
+};
+
 @Injectable()
 export class ArticlesService {
   constructor(private prisma: PrismaService) {}
@@ -32,8 +39,24 @@ export class ArticlesService {
     });
   }
 
-  findArticles() {
+  findArticles(query?: QueryArticle) {
+    console.log(query);
+
     return this.prisma.post.findMany({
+      where: {
+        author: {
+          is: {
+            username: query.author,
+          },
+        },
+        tags: {
+          some: {
+            name: query.tag,
+          },
+        },
+      },
+      skip: query.offset,
+      take: query.limit,
       select: {
         id: true,
         title: true,

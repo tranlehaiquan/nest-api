@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -13,6 +14,7 @@ import { AuthGuard } from 'src/auth.guard';
 import { CreateArticle } from './dto/create-articles.dto';
 import { CurrentUser } from 'src/decorator/user.decorator';
 import { UpdateArticle } from './dto/update-articles.dto';
+import { ListArticles } from './dto/find-articles.dto';
 
 @ApiTags('articles')
 @Controller('articles')
@@ -20,8 +22,14 @@ export class ArticlesController {
   constructor(private articlesService: ArticlesService) {}
 
   @Get()
-  async getArticles() {
-    return this.articlesService.findArticles();
+  async getArticles(@Query() query: ListArticles) {
+    const { tag, author, limit = 20, offset = 0 } = query;
+    return this.articlesService.findArticles({
+      tag,
+      author,
+      limit: Number(limit),
+      offset: Number(offset),
+    });
   }
 
   @Get(':slug')
