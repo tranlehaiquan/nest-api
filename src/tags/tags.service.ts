@@ -8,7 +8,6 @@ export class TagsService {
   constructor(private prismaService: PrismaService) {}
 
   async getTags() {
-    console.log('here');
     return this.prismaService.tag.findMany({
       select: {
         id: true,

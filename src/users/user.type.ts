@@ -24,4 +24,10 @@ export class UserLogin extends User {
   token: string;
 }
 
+@ObjectType()
+export class ProfileUser extends User {
+  @Field(() => Boolean, { nullable: true })
+  following: boolean;
+}
+
 export default User;

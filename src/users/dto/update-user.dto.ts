@@ -1,18 +1,19 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ArgsType, Field } from '@nestjs/graphql';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
 
+@ArgsType()
 export class UpdateUserDto {
-  @ApiPropertyOptional()
+  @Field(() => String, { nullable: true })
   @IsEmail()
   @IsOptional()
   email?: string;
 
-  @ApiPropertyOptional()
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   bio?: string;
 
-  @ApiPropertyOptional()
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   image?: string;
