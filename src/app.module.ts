@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/user.module';
 import { ProfilesModule } from './profiles/profiles.module';
@@ -13,6 +15,11 @@ import { TagsModule } from './tags/tags.module';
     ArticlesModule,
     CommentsModule,
     TagsModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      playground: true,
+      autoSchemaFile: true,
+    }),
   ],
   controllers: [AppController],
   providers: [],
