@@ -19,6 +19,13 @@ export class ArticlesService {
       where: {
         id,
       },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        body: true,
+        tags: true,
+      },
     });
   }
 
@@ -39,19 +46,17 @@ export class ArticlesService {
     });
   }
 
-  findArticles(query?: QueryArticle) {
-    console.log(query);
-
+  findArticles(query: QueryArticle = { limit: 20, offset: 0 }) {
     return this.prisma.post.findMany({
       where: {
         author: {
           is: {
-            username: query.author,
+            username: query?.author,
           },
         },
         tags: {
           some: {
-            name: query.tag,
+            name: query?.tag,
           },
         },
       },
