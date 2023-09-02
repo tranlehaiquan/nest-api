@@ -54,7 +54,7 @@ export class ArticlesService {
             username: query?.author,
           },
         },
-        tags: {
+        tags: query?.tag && {
           some: {
             name: query?.tag,
           },
@@ -89,7 +89,7 @@ export class ArticlesService {
         slug,
         authorId,
         tags: {
-          connectOrCreate: tags.map((tag) => ({
+          connectOrCreate: (tags || []).map((tag) => ({
             where: { name: tag },
             create: {
               name: tag,
@@ -99,16 +99,24 @@ export class ArticlesService {
           })),
         },
       },
-      select: {
-        id: true,
-        tags: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
     });
+  }
+
+  async updateArticle(data: UpdateArticle, authorId: string) {
+    try {
+      const article = await this.prisma.post.update({
+        where: {
+          id: data.id,
+          authorId,
+        },
+        data,
+      });
+
+      return article;
+    } catch (err) {
+      console.log(err);
+      throw new HttpException('Article not found', HttpStatus.NOT_FOUND);
+    }
   }
 
   async updateArticleById(id: string, data: UpdateArticle, authorId: string) {
@@ -149,18 +157,14 @@ export class ArticlesService {
     }
   }
 
-  async deleteArticleBySlug(slug: string, authorId: string) {
+  async deleteArticleById(id: string, authorId: string) {
     try {
-      await this.prisma.post.delete({
+      return await this.prisma.post.delete({
         where: {
-          slug,
+          id,
           authorId,
         },
       });
-
-      return {
-        message: 'Article deleted successfully',
-      };
     } catch (err) {
       console.log(err);
       throw new HttpException('Article not found', HttpStatus.NOT_FOUND);
