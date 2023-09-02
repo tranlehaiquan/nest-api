@@ -1,10 +1,14 @@
-import { IsString } from 'class-validator';
+import { IsUUID, IsString } from 'class-validator';
+import { ArgsType, Field, ID } from '@nestjs/graphql';
 
+@ArgsType()
 class CreateComment {
+  @Field(() => String)
   @IsString()
   body: string;
 
-  @IsString()
+  @Field(() => ID)
+  @IsUUID()
   postId: string;
 }
 

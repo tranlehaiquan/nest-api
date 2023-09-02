@@ -9,4 +9,10 @@ class Comment {
   body: string;
 }
 
+@ObjectType()
+export class CommentDeleteResult {
+  @Field(() => ID)
+  id: string;
+}
+
 export default Comment;
