@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from '../database/prisma.service';
 import { CreateArticle } from './dto/create-articles.dto';
-import { stringToSlugWithRandomNumber } from 'src/utils/stringToSlug';
+import { stringToSlugWithRandomNumber } from '../utils/stringToSlug';
 import { UpdateArticle } from './dto/update-articles.dto';
 
 type QueryArticle = {
