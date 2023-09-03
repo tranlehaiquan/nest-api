@@ -24,7 +24,6 @@ export class ArticlesService {
         title: true,
         description: true,
         body: true,
-        tags: true,
       },
     });
   }

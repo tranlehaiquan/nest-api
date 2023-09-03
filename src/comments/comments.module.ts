@@ -7,5 +7,6 @@ import { CommentsResolver } from './comments.resolver';
   imports: [PrismaModule],
   providers: [CommentsService, CommentsResolver],
   controllers: [],
+  exports: [CommentsService],
 })
 export class CommentsModule {}

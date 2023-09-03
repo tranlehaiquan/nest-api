@@ -7,5 +7,6 @@ import { TagsResolver } from './tags.resolver';
   imports: [PrismaModule],
   providers: [TagsService, TagsResolver],
   controllers: [],
+  exports: [TagsService],
 })
 export class TagsModule {}
