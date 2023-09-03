@@ -1,20 +1,21 @@
 import { IsString, IsOptional } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { Field, ArgsType } from '@nestjs/graphql';
 
+@ArgsType()
 export class CreateArticle {
-  @ApiProperty()
+  @Field(() => String)
   @IsString()
   title: string;
 
-  @ApiProperty()
+  @Field(() => String)
   @IsString()
   description: string;
 
-  @ApiProperty()
+  @Field(() => String)
   @IsString()
   body: string;
 
-  @ApiProperty()
+  @Field(() => [String], { nullable: true })
   @IsString({ each: true })
   @IsOptional()
   tags: string[];

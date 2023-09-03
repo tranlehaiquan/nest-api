@@ -35,4 +35,21 @@ export class TagsService {
       },
     });
   }
+
+  async getTagsByPostId(postId: string) {
+    return await this.prismaService.tag.findMany({
+      where: {
+        post: {
+          some: {
+            id: postId,
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    });
+  }
 }

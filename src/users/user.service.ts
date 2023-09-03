@@ -140,7 +140,7 @@ export class UserService {
   }
 
   async getProfileUser(username: string, currentUser?: string) {
-    let isFollowed = false;
+    let following = false;
     const user = await this.prisma.user.findUnique({
       where: {
         username,
@@ -149,8 +149,6 @@ export class UserService {
         ...select,
       },
     });
-
-    console.log(user);
 
     if (currentUser) {
       const follower = await this.prisma.follows.findUnique({
@@ -163,7 +161,7 @@ export class UserService {
       });
 
       if (follower) {
-        isFollowed = true;
+        following = true;
       }
     }
 
@@ -173,28 +171,50 @@ export class UserService {
 
     return {
       ...user,
-      isFollowed,
+      following,
     };
   }
 
   async followUser(data: { followerId: string; followingId: string }) {
-    return await this.prisma.follows.create({
-      data: {
-        followerId: data.followerId,
-        followingId: data.followingId,
-      },
-    });
-  }
+    try {
+      // check if it is already following
+      const follower = await this.prisma.follows.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: data.followerId,
+            followingId: data.followingId,
+          },
+        },
+      });
 
-  async unFollowUser(data: { followerId: string; followingId: string }) {
-    return await this.prisma.follows.delete({
-      where: {
-        followerId_followingId: {
+      if (follower) return true;
+
+      await this.prisma.follows.create({
+        data: {
           followerId: data.followerId,
           followingId: data.followingId,
         },
-      },
-    });
+      });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async unFollowUser(data: { followerId: string; followingId: string }) {
+    try {
+      await this.prisma.follows.delete({
+        where: {
+          followerId_followingId: {
+            followerId: data.followerId,
+            followingId: data.followingId,
+          },
+        },
+      });
+    } catch (error) {
+      return true;
+    }
   }
 
   public generateJWT(user) {

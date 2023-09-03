@@ -1,8 +1,9 @@
 import { IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ArgsType, Field } from '@nestjs/graphql';
 
+@ArgsType()
 export class CreateTag {
-  @ApiProperty()
+  @Field(() => String)
   @IsString()
   name: string;
 }
