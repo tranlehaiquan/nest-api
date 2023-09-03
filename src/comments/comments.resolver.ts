@@ -1,4 +1,11 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { CommentsService } from './comments.service';
 import Comment, { CommentDeleteResult } from './comments.type';
 import { UseGuards } from '@nestjs/common';
@@ -6,10 +13,15 @@ import { AuthGuard } from 'src/auth.guard';
 import CreateComment from './dto/create-comment.dto';
 import { CurrentUser } from 'src/decorator/user.decorator';
 import DeleteComment from './dto/delete-comment.dto';
+import { UserService } from 'src/users/user.service';
+import User from 'src/users/user.type';
 
 @Resolver(Comment)
 export class CommentsResolver {
-  constructor(private services: CommentsService) {}
+  constructor(
+    private services: CommentsService,
+    private userServices: UserService,
+  ) {}
 
   @Query(() => [Comment])
   getCommentsByArticleId(@Args('id') id: string) {
@@ -29,5 +41,10 @@ export class CommentsResolver {
     @CurrentUser() user: any,
   ) {
     return this.services.remove(deleteComment.commentId, user.id);
+  }
+
+  @ResolveField(() => User)
+  async author(@Parent() comment: Comment) {
+    return this.userServices.getUserById(comment.authorId);
   }
 }
