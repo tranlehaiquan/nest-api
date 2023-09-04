@@ -1,0 +1,79 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: String!
+  username: String!
+  email: String!
+  bio: String!
+  image: String!
+}
+
+type UserLogin {
+  id: String!
+  username: String!
+  email: String!
+  bio: String!
+  image: String!
+  token: String!
+}
+
+type ProfileUser {
+  id: String!
+  username: String!
+  email: String!
+  bio: String!
+  image: String!
+  following: Boolean
+}
+
+type Tags {
+  id: ID!
+  name: String!
+  description: String!
+  slug: String!
+}
+
+type Articles {
+  id: ID!
+  title: String!
+  description: String!
+  body: String!
+  tags: [Tags!]!
+  comments: [Comment!]!
+}
+
+type Comment {
+  id: ID!
+  body: String!
+  authorId: ID!
+  author: User!
+}
+
+type CommentDeleteResult {
+  id: ID!
+}
+
+type Query {
+  whoAmI: User!
+  login(email: String!, password: String!): UserLogin!
+  getUser(username: String!): ProfileUser!
+  articles: [Articles!]!
+  articleById(id: String!): Articles!
+  getCommentsByArticleId(id: String!): [Comment!]!
+  tags: [Tags!]!
+}
+
+type Mutation {
+  register(username: String!, email: String!, password: String!): User!
+  updateUser(email: String, bio: String, image: String): User!
+  followUser(followingId: ID!): Boolean!
+  unFollowUser(followingId: ID!): Boolean!
+  createArticle(title: String!, description: String!, body: String!, tags: [String!]): Articles!
+  updateArticle(id: ID!): Articles!
+  deleteArticle(id: String!): Articles!
+  createComment(body: String!, postId: ID!): Comment!
+  removeComment(commentId: ID!): CommentDeleteResult!
+  create(name: String!): Tags!
+}
