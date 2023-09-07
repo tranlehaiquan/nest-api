@@ -1,0 +1,7 @@
+overwrite: true
+schema: './apps/api/src/schema.gql'
+documents: []
+generates:
+  ./apps/web/graphql.schema.json:
+    plugins:
+      - 'introspection'

@@ -8,11 +8,17 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/introspection": "^4.0.0",
+    "dotenv-cli": "latest",
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
-    "dotenv-cli": "latest",
-    "turbo": "latest"
+    "turbo": "latest",
+    "typescript": "^5.2.2"
   },
   "packageManager": "pnpm@8.6.10",
-  "name": "nest-api"
+  "name": "nest-api",
+  "dependencies": {
+    "graphql": "^16.8.0"
+  }
 }
