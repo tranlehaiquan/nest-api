@@ -1,7 +1,50 @@
 overwrite: true
 schema: './apps/api/src/schema.gql'
-documents: []
+documents: ['./apps/web/src/**/*.graphql']
 generates:
+  # introspection for extensions
   ./apps/web/graphql.schema.json:
     plugins:
       - 'introspection'
+  # types for code
+  ./apps/web/src/graphql.types.ts:
+    plugins:
+      - typescript
+    config:
+      avoidOptionals: true
+      strictScalars: true
+      scalars:
+        DateTime: string
+        JSONObject: Record<string, unknown>
+        JSON: Record<string, unknown>
+      nonOptionalTypename: true
+      useTypeImports: true
+      inlineFragmentTypes: combine
+      exportFragmentSpreadSubTypes: true
+      useExplicitTyping: true
+  # type of react-apollo hooks
+  ./apps/web/src:
+    preset: near-operation-file
+    presetConfig:
+      baseTypesPath: ./graphql.types.ts
+      extension: .operation.tsx
+      folder: operations
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      avoidOptionals: true
+      onlyOperationTypes: true
+      strictScalars: true
+      scalars:
+        DateTime: string
+        JSONObject: Record<string, unknown>
+        JSON: Record<string, unknown>
+      nonOptionalTypename: true
+      useTypeImports: true
+      inlineFragmentTypes: combine
+      exportFragmentSpreadSubTypes: true
+      useExplicitTyping: true
+      withRefetchFn: true
+      pureMagicComment: true
+    
