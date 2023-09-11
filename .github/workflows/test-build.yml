@@ -33,10 +33,10 @@ jobs:
         run: pnpm install
  
       - name: Lint
-        run: pnpm run lint
+        run: pnpm run build:all
 
       - name: Test
-        run: pnpm run build
+        run: pnpm run lint
 
       - name: Build
         run: pnpm run test
