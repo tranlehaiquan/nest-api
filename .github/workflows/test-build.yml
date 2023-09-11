@@ -32,11 +32,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
  
-      - name: Lint
+      - name: Build:all
         run: pnpm run build:all
 
-      - name: Test
+      - name: Lint
         run: pnpm run lint
 
-      - name: Build
+      - name: T est
         run: pnpm run test
