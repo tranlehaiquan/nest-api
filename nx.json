@@ -18,6 +18,9 @@
     },
     "lint": {
       "input": ["src/**.ts", "src/**/*.ts"]
+    },
+    "dev": {
+      "dependsOn": ["^build"]
     }
   },
   "affected": {
