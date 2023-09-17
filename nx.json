@@ -14,7 +14,8 @@
   },
   "targetDefaults": {
     "build": {
-      "input": ["src/**.ts", "src/**/*.ts"]
+      "input": ["src/**.ts", "src/**/*.ts"],
+      "dependsOn": ["^build"]
     },
     "lint": {
       "input": ["src/**.ts", "src/**/*.ts"]
@@ -25,5 +26,15 @@
   },
   "affected": {
     "defaultBase": "main"
+  },
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "babel": true
+      },
+      "library": {
+        "unitTestRunner": "vitest"
+      }
+    }
   }
 }

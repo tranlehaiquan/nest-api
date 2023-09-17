@@ -13,10 +13,10 @@
     "dotenv-cli": "latest",
     "eslint": "^8.48.0",
     "nx": "16.8.1",
+    "nx-cloud": "latest",
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
-    "typescript": "^5.2.2",
-    "nx-cloud": "latest"
+    "typescript": "^5.2.2"
   },
   "packageManager": "pnpm@8.6.10",
   "name": "nest-api",
@@ -27,6 +27,15 @@
     "@graphql-codegen/typescript-apollo-client-helpers": "^2.2.6",
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
+    "@nx/cypress": "16.8.1",
+    "@nx/eslint-plugin": "16.8.1",
+    "@nx/jest": "16.8.1",
+    "@nx/js": "16.8.1",
+    "@nx/linter": "16.8.1",
+    "@nx/playwright": "16.8.1",
+    "@nx/react": "16.8.1",
+    "@nx/vite": "16.8.1",
+    "@nx/workspace": "16.8.1",
     "graphql": "^16.8.0"
   }
 }
