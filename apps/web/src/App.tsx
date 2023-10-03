@@ -1,5 +1,4 @@
 import { useArticlesQuery } from "./queries/operations/get-articles.operation";
-import { Button } from "shared-ui";
 
 function App() {
   const { loading, data, error } = useArticlesQuery();
@@ -10,7 +9,6 @@ function App() {
   return (
     <div>
       {JSON.stringify(data)}
-      <Button className="222" onClick={console.log}>222</Button>
     </div>
   );
 }
