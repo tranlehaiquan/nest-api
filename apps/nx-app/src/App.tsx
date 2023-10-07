@@ -1,4 +1,5 @@
-import { useArticlesQuery } from "./queries/operations/get-articles.operation";
+import { useArticlesQuery } from './queries/operations/get-articles.operation';
+import { Select, Hello } from 'react-components';
 
 function App() {
   const { loading, data, error } = useArticlesQuery();
@@ -7,8 +8,8 @@ function App() {
   if (error) return <p>Error : {error.message}</p>;
 
   return (
-    <div>
-      {JSON.stringify(data)}
+    <div className=" bg-yellow-50">
+      {JSON.stringify(data)} <Select /> <Hello />
     </div>
   );
 }

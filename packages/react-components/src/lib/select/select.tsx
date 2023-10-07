@@ -6,7 +6,7 @@ export interface SelectProps {}
 export function Select(props: SelectProps) {
   return (
     <div className={styles['container']}>
-      <h1>Welcome to Select!</h1>
+      hell
     </div>
   );
 }

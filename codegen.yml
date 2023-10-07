@@ -1,6 +1,6 @@
 overwrite: true
 schema: './apps/api/src/schema.gql'
-documents: ['./apps/web/src/**/*.graphql']
+documents: ['./apps/nx-app/src/**/*.graphql']
 generates:
   # introspection for extensions
   ./apps/nx-app/graphql.schema.json:

@@ -66,5 +66,10 @@
         "style": "css"
       }
     }
+  },
+  "workspaceLayout": {
+    "projectNameAndRootFormat": "derived",
+    "appsDir": "apps",
+    "libsDir": "packages"
   }
 }
