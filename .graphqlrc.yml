@@ -1,4 +1,4 @@
 projects:
   web:
-    schema: ['apps/web/graphql.schema.json']
-    documents: ['apps/web/**/*.graphql']
+    schema: ['apps/nx-app/graphql.schema.json']
+    documents: ['apps/nx-app/**/*.graphql']
