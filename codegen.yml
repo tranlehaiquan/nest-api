@@ -3,11 +3,11 @@ schema: './apps/api/src/schema.gql'
 documents: ['./apps/web/src/**/*.graphql']
 generates:
   # introspection for extensions
-  ./apps/web/graphql.schema.json:
+  ./apps/nx-app/graphql.schema.json:
     plugins:
       - 'introspection'
   # types for code
-  ./apps/web/src/graphql.types.ts:
+  ./apps/nx-app/src/graphql.types.ts:
     plugins:
       - typescript
     config:
@@ -23,7 +23,7 @@ generates:
       exportFragmentSpreadSubTypes: true
       useExplicitTyping: true
   # type of react-apollo hooks
-  ./apps/web/src:
+  ./apps/nx-app/src:
     preset: near-operation-file
     presetConfig:
       baseTypesPath: ./graphql.types.ts
