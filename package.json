@@ -59,7 +59,7 @@
     "@nx/eslint-plugin": "16.8.1",
     "@nx/jest": "16.8.1",
     "@nx/js": "16.8.1",
-    "@nx/playwright": "16.8.1",
+    "@nx/playwright": "17.1.1",
     "@nx/workspace": "17.0.3",
     "@swc/helpers": "~0.5.2",
     "graphql": "^16.8.1",
