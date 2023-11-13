@@ -51,7 +51,7 @@
   "name": "nest-api",
   "dependencies": {
     "@apollo/client": "^3.8.5",
-    "@graphql-codegen/near-operation-file-preset": "^2.5.0",
+    "@graphql-codegen/near-operation-file-preset": "^3.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-apollo-client-helpers": "^2.2.6",
     "@graphql-codegen/typescript-operations": "^4.0.1",
