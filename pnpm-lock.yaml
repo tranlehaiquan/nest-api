@@ -91,8 +91,8 @@ importers:
         specifier: ~1.3.92
         version: 1.3.92(@swc/helpers@0.5.2)
       '@testing-library/react':
-        specifier: 14.0.0
-        version: 14.0.0(react-dom@18.2.0)(react@18.2.0)
+        specifier: 14.2.1
+        version: 14.2.1(react-dom@18.2.0)(react@18.2.0)
       '@types/node':
         specifier: 20.8.0
         version: 20.8.0
@@ -155,7 +155,7 @@ importers:
         version: 16.8.1(@swc/core@1.3.92)
       nx-cloud:
         specifier: latest
-        version: 16.5.2
+        version: 18.0.0
       postcss:
         specifier: 8.4.21
         version: 8.4.21
@@ -3635,10 +3635,10 @@ packages:
       - verdaccio
     dev: true
 
-  /@nrwl/nx-cloud@16.5.2:
-    resolution: {integrity: sha512-oHO5T1HRJsR9mbRd8eUqMBPCgqVZLSbAh3zJoPFmhEmjbM4YB9ePRpgYFT8dRNeZUOUd/8Yt7Pb6EVWOHvpD/w==}
+  /@nrwl/nx-cloud@18.0.0:
+    resolution: {integrity: sha512-rjjcJgzDmKwFD1QVIMs5O3X4SoMQIk0bzh3pL90ZP/B5YJUlTySv7+R0JoGQ6ROGwVQHjPFMVKKLB09zl5perA==}
     dependencies:
-      nx-cloud: 16.5.2
+      nx-cloud: 18.0.0
     transitivePeerDependencies:
       - debug
     dev: true
@@ -5012,8 +5012,8 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/react@14.0.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-S04gSNJbYE30TlIMLTzv6QCTzt9AqIF5y6s6SzVFILNcNvbV/jU96GeiTPillGQo+Ny64M/5PV7klNYYgv5Dfg==}
+  /@testing-library/react@14.2.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-sGdjws32ai5TLerhvzThYFbpnF9XtL65Cjf+gB0Dhr29BGqK+mAeN7SURSdu+eqgET4ANcWoC7FQpkaiGvBr+A==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.0.0
@@ -10777,11 +10777,11 @@ packages:
     resolution: {integrity: sha512-ub5E4+FBPKwAZx0UwIQOjYWGHTEq5sPqHQNRN8Z9e4A7u3Tj1weLJsL59yH9vmvqEtBHaOmT6cYQKIZOxp35FQ==}
     dev: true
 
-  /nx-cloud@16.5.2:
-    resolution: {integrity: sha512-1t1Ii9gojl8r/8hFGaZ/ZyYR0Cb0hzvXLCsaFuvg+EJEFdvua3P4cfNya/0bdRrm+7Eb/ITUOskbvYq4TSlyGg==}
+  /nx-cloud@18.0.0:
+    resolution: {integrity: sha512-VpPywcHmFIU3GSWb3KV3nQ+TAMLc06DTO39vTFsM+HreB6qRloDxbADRvfM5eHAbY26TNmwflT7wxd0fluv2+A==}
     hasBin: true
     dependencies:
-      '@nrwl/nx-cloud': 16.5.2
+      '@nrwl/nx-cloud': 18.0.0
       axios: 1.1.3
       chalk: 4.1.2
       dotenv: 10.0.0
