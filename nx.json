@@ -1,53 +1,41 @@
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx-cloud",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test"
-        ],
-        "accessToken": "NzBmOTZjMGUtN2IzNS00NzljLWJjOWItYTllOGM2NmY4ZTMwfHJlYWQtd3JpdGU="
-      }
-    }
-  },
   "targetDefaults": {
     "build": {
-      "input": [
-        "src/**.ts",
-        "src/**/*.ts"
-      ],
-      "dependsOn": [
-        "^build"
-      ]
+      "input": ["src/**.ts", "src/**/*.ts"],
+      "dependsOn": ["^build"],
+      "cache": true
     },
     "lint": {
-      "input": [
-        "src/**.ts",
-        "src/**/*.ts"
-      ],
+      "input": ["src/**.ts", "src/**/*.ts"],
       "inputs": [
         "default",
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore",
         "{workspaceRoot}/eslint.config.js"
-      ]
+      ],
+      "cache": true
     },
     "dev": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test": {
+      "inputs": ["default", "^default"],
+      "cache": true
+    },
+    "@nx/vite:test": {
+      "inputs": ["default", "^default"],
+      "cache": true
+    },
+    "@nx/eslint:lint": {
+      "input": ["src/**.ts", "src/**/*.ts"],
       "inputs": [
         "default",
-        "^default"
-      ]
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore",
+        "{workspaceRoot}/eslint.config.js"
+      ],
+      "cache": true
     }
-  },
-  "affected": {
-    "defaultBase": "main"
   },
   "generators": {
     "@nx/react": {
@@ -71,5 +59,8 @@
     "projectNameAndRootFormat": "derived",
     "appsDir": "apps",
     "libsDir": "packages"
-  }
+  },
+  "nxCloudAccessToken": "NzBmOTZjMGUtN2IzNS00NzljLWJjOWItYTllOGM2NmY4ZTMwfHJlYWQtd3JpdGU=",
+  "useInferencePlugins": false,
+  "defaultBase": "main"
 }

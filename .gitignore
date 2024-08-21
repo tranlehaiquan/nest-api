@@ -394,3 +394,5 @@ dist
 .serverless/**/*.zip
 
 .turbo
+.nx/cache
+.nx/workspace-data
