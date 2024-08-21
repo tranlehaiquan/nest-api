@@ -20,7 +20,7 @@ export function Status(props: StatusProps) {
       
     </div>
   );
-};
+}
 
 
 export default Status;

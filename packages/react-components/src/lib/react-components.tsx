@@ -20,7 +20,7 @@ export function ReactComponents(props: ReactComponentsProps) {
       
     </div>
   );
-};
+}
 
 
 export default ReactComponents;
