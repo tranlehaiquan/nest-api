@@ -16,7 +16,13 @@ $ pnpm install
 # development
 $ docker compose up -d
 $ cp .env.example .env
-$ npx nx run-many --all --target=dev
+$ pnpm run start
+
+# watch mode
+$ pnpm run start:dev
+
+# production mode
+$ pnpm run start:prod
 ```
 
 ## Test
@@ -24,30 +30,24 @@ $ npx nx run-many --all --target=dev
 ```bash
 # unit tests
 $ pnpm run test
+
+# e2e tests
+$ pnpm run test:e2e
+
+# test coverage
+$ pnpm run test:cov
 ```
 
-## Add a dependency
+## Support
 
-We follow nx mono repo structure. To add a dependency to a project, go to root directory and run:
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-```bash
-$ pnpm add <dependency> -W
+## Stay in touch
 
-# example react-select
-$ pnpm add react-select -W
-```
+- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## Add a new project react (libs)
+## License
 
-```
-nx g @nx/react:library --name=react-components --projectNameAndRootFormat=derived
-```
-
-## Add a react component to a project
-
-Let add a Status component to react-components project
-
-```bash
-$ npx nx g @nx/react:component --name=Status --project=react-components
-$ npx nx g @nx/react:component --name=Hello --project=react-components
-```
+  Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
