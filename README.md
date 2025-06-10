@@ -16,6 +16,7 @@ $ pnpm install
 # development
 $ docker compose up -d
 $ cp .env.example .env
+$ npx prisma generate
 $ pnpm run start
 
 # watch mode
