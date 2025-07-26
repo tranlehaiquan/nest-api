@@ -1,18 +1,39 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TagsService } from './tags.service';
-import { PrismaService } from '../database/prisma.service';
+import { DatabaseService } from '../database/database.service';
 
 describe('TagsService', () => {
   let service: TagsService;
-  let prismaService: PrismaService;
+  let mockDb: any;
 
   beforeEach(async () => {
+    // Create mock database with Drizzle query builder pattern
+    mockDb = {
+      select: jest.fn().mockReturnThis(),
+      from: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      innerJoin: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      values: jest.fn().mockReturnThis(),
+      returning: jest.fn().mockReturnThis(),
+    };
+
+    const mockDatabaseService = {
+      db: mockDb,
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TagsService, PrismaService],
+      providers: [
+        TagsService,
+        {
+          provide: DatabaseService,
+          useValue: mockDatabaseService,
+        },
+      ],
     }).compile();
 
     service = module.get<TagsService>(TagsService);
-    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {
@@ -22,13 +43,17 @@ describe('TagsService', () => {
   describe('getTags', () => {
     it('should return an array of tags', async () => {
       const tags = [
-        { id: '1', name: 'tag1', slug: 'tag1', description: 'tag1' },
-        { id: '2', name: 'tag2', slug: 'tag2', description: 'tag1' },
+        { id: '1', name: 'tag1', slug: 'tag1' },
+        { id: '2', name: 'tag2', slug: 'tag2' },
       ];
-      jest.spyOn(prismaService.tag, 'findMany').mockResolvedValue(tags);
+      
+      mockDb.select.mockReturnValue(mockDb);
+      mockDb.from.mockResolvedValue(tags);
 
       const result = await service.getTags();
 
+      expect(mockDb.select).toHaveBeenCalled();
+      expect(mockDb.from).toHaveBeenCalled();
       expect(result).toEqual(tags);
     });
   });
@@ -42,12 +67,24 @@ describe('TagsService', () => {
         slug: 'newtag',
         description: 'newTag',
       };
-      jest.spyOn(prismaService.tag, 'findUnique').mockResolvedValue(null);
-      jest.spyOn(prismaService.tag, 'create').mockResolvedValue(createdTag);
+
+      // Mock the check for existing tag (returns empty array)
+      mockDb.select.mockReturnValue(mockDb);
+      mockDb.from.mockReturnValue(mockDb);
+      mockDb.where.mockReturnValue(mockDb);
+      mockDb.limit.mockResolvedValue([]); // No existing tag
+
+      // Mock the insert operation
+      mockDb.insert.mockReturnValue(mockDb);
+      mockDb.values.mockReturnValue(mockDb);
+      mockDb.returning.mockResolvedValue([createdTag]);
 
       const result = await service.createTag(tagInput);
 
       expect(result).toEqual(createdTag);
+      expect(mockDb.insert).toHaveBeenCalled();
+      expect(mockDb.values).toHaveBeenCalled();
+      expect(mockDb.returning).toHaveBeenCalled();
     });
 
     it('should return the existing tag if it already exists', async () => {
@@ -56,15 +93,19 @@ describe('TagsService', () => {
         id: '1',
         name: 'existingTag',
         slug: 'existingtag',
-        description: 'existingtag',
+        description: 'existingTag',
       };
-      jest
-        .spyOn(prismaService.tag, 'findUnique')
-        .mockResolvedValue(existingTag);
+
+      // Mock the check for existing tag (returns the existing tag)
+      mockDb.select.mockReturnValue(mockDb);
+      mockDb.from.mockReturnValue(mockDb);
+      mockDb.where.mockReturnValue(mockDb);
+      mockDb.limit.mockResolvedValue([existingTag]);
 
       const result = await service.createTag(tagInput);
 
       expect(result).toEqual(existingTag);
+      expect(mockDb.insert).not.toHaveBeenCalled();
     });
   });
 
@@ -72,13 +113,21 @@ describe('TagsService', () => {
     it('should return an array of tags for the given post ID', async () => {
       const postId = '1';
       const tags = [
-        { id: '1', name: 'tag1', slug: 'tag1', description: 'tag1' },
-        { id: '2', name: 'tag2', slug: 'tag2', description: 'tag2' },
+        { id: '1', name: 'tag1', slug: 'tag1' },
+        { id: '2', name: 'tag2', slug: 'tag2' },
       ];
-      jest.spyOn(prismaService.tag, 'findMany').mockResolvedValue(tags);
+
+      mockDb.select.mockReturnValue(mockDb);
+      mockDb.from.mockReturnValue(mockDb);
+      mockDb.innerJoin.mockReturnValue(mockDb);
+      mockDb.where.mockResolvedValue(tags);
 
       const result = await service.getTagsByPostId(postId);
 
+      expect(mockDb.select).toHaveBeenCalled();
+      expect(mockDb.from).toHaveBeenCalled();
+      expect(mockDb.innerJoin).toHaveBeenCalled();
+      expect(mockDb.where).toHaveBeenCalled();
       expect(result).toEqual(tags);
     });
   });
