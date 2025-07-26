@@ -1,4 +1,11 @@
-import { pgTable, text, uuid, timestamp, boolean, primaryKey } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  text,
+  uuid,
+  timestamp,
+  boolean,
+  primaryKey,
+} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // User table
@@ -19,7 +26,9 @@ export const posts = pgTable('Post', {
   description: text('description'),
   body: text('body').notNull(),
   published: boolean('published').default(false),
-  authorId: uuid('authorId').notNull().references(() => users.id),
+  authorId: uuid('authorId')
+    .notNull()
+    .references(() => users.id),
   slug: text('slug').unique().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
@@ -36,18 +45,28 @@ export const tags = pgTable('Tag', {
 
 // Follows table (many-to-many relationship)
 export const follows = pgTable('Follows', {
-  followerId: uuid('followerId').notNull().references(() => users.id),
-  followingId: uuid('followingId').notNull().references(() => users.id),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.followerId, table.followingId] }),
-}));
+  followerId: uuid('followerId')
+    .notNull()
+    .references(() => users.id),
+  followingId: uuid('followingId')
+    .notNull()
+    .references(() => users.id),
+});
+
+export const followsPrimaryKey = primaryKey({
+  columns: [follows.followerId, follows.followingId],
+});
 
 // Comment table
 export const comments = pgTable('Comment', {
   id: uuid('id').primaryKey().defaultRandom(),
   body: text('body').notNull(),
-  authorId: uuid('authorId').notNull().references(() => users.id),
-  postId: uuid('postId').notNull().references(() => posts.id),
+  authorId: uuid('authorId')
+    .notNull()
+    .references(() => users.id),
+  postId: uuid('postId')
+    .notNull()
+    .references(() => posts.id),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   deleted: timestamp('deleted'),
@@ -55,19 +74,31 @@ export const comments = pgTable('Comment', {
 
 // UserFavoriteComment table (many-to-many relationship)
 export const userFavoriteComments = pgTable('UserFavoriteComment', {
-  userId: uuid('userId').notNull().references(() => users.id),
-  commentId: uuid('commentId').notNull().references(() => comments.id),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.userId, table.commentId] }),
-}));
+  userId: uuid('userId')
+    .notNull()
+    .references(() => users.id),
+  commentId: uuid('commentId')
+    .notNull()
+    .references(() => comments.id),
+});
+
+export const userFavoriteCommentsPrimaryKey = primaryKey({
+  columns: [userFavoriteComments.userId, userFavoriteComments.commentId],
+});
 
 // Post-Tag many-to-many relationship table
 export const postTags = pgTable('_PostToTag', {
-  postId: uuid('A').notNull().references(() => posts.id),
-  tagId: uuid('B').notNull().references(() => tags.id),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.postId, table.tagId] }),
-}));
+  postId: uuid('A')
+    .notNull()
+    .references(() => posts.id),
+  tagId: uuid('B')
+    .notNull()
+    .references(() => tags.id),
+});
+
+export const postTagsPrimaryKey = primaryKey({
+  columns: [postTags.postId, postTags.tagId],
+});
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
@@ -116,16 +147,19 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
   favoriteBy: many(userFavoriteComments),
 }));
 
-export const userFavoriteCommentsRelations = relations(userFavoriteComments, ({ one }) => ({
-  user: one(users, {
-    fields: [userFavoriteComments.userId],
-    references: [users.id],
+export const userFavoriteCommentsRelations = relations(
+  userFavoriteComments,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userFavoriteComments.userId],
+      references: [users.id],
+    }),
+    comment: one(comments, {
+      fields: [userFavoriteComments.commentId],
+      references: [comments.id],
+    }),
   }),
-  comment: one(comments, {
-    fields: [userFavoriteComments.commentId],
-    references: [comments.id],
-  }),
-}));
+);
 
 export const postTagsRelations = relations(postTags, ({ one }) => ({
   post: one(posts, {
@@ -136,4 +170,4 @@ export const postTagsRelations = relations(postTags, ({ one }) => ({
     fields: [postTags.tagId],
     references: [tags.id],
   }),
-})); 
+}));
