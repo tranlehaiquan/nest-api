@@ -7,6 +7,12 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  css: {
+    devSourcemap: true,
+  },
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     tsConfigPaths({
       projects: ['./tsconfig.json'],
