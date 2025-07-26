@@ -5,7 +5,7 @@
   "description": "Nest TypeScript starter repository",
   "license": "MIT",
   "scripts": {
-    "build": "npx prisma generate && nest build",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "serve": "nest start --watch",
@@ -18,7 +18,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@apollo/server": "^4.12.2",
@@ -32,15 +36,15 @@
     "@nestjs/platform-express": "^11.1.5",
     "@nestjs/schematics": "^11.0.5",
     "@nestjs/testing": "^11.1.5",
-    "@prisma/client": "6.12.0",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "drizzle-orm": "0.44.3",
     "graphql": "^16.11.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "prisma": "^6.12.0",
+    "pg": "8.16.3",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
@@ -48,9 +52,11 @@
     "@swc/core": "^1.13.2",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.1.0",
+    "@types/pg": "8.15.4",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
+    "drizzle-kit": "0.31.4",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",

@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "User" ALTER COLUMN "bio" SET DEFAULT '',
-ALTER COLUMN "image" DROP NOT NULL;

@@ -1,54 +1,62 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { DatabaseService } from '../database/database.service';
 import CreateComment from './dto/create-comment.dto';
+import { comments } from '../database/schema';
+import { eq, and } from 'drizzle-orm';
 
 @Injectable()
 export class CommentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private database: DatabaseService) {}
 
   // add comment to post
   async create(data: CreateComment, userId: string) {
-    return await this.prisma.comment.create({
-      data: {
+    const newComment = await this.database.db
+      .insert(comments)
+      .values({
         body: data.body,
         postId: data.postId,
         authorId: userId,
-      },
-    });
+      })
+      .returning();
+
+    return newComment[0];
   }
 
   async listCommentByArticleId(postId: string) {
-    return await this.prisma.comment.findMany({
-      where: {
-        postId,
-      },
-    });
+    return await this.database.db
+      .select()
+      .from(comments)
+      .where(eq(comments.postId, postId));
   }
 
   async remove(id: string, authorId: string) {
-    return await this.prisma.comment.delete({
-      where: {
-        id,
-        authorId,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const deletedComment = await this.database.db
+      .delete(comments)
+      .where(and(eq(comments.id, id), eq(comments.authorId, authorId)))
+      .returning({
+        id: comments.id,
+      });
+
+    return deletedComment[0];
   }
 
   // get comment from article
   async findOne(id: string) {
-    return await this.prisma.comment.findFirstOrThrow({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        body: true,
-        authorId: true,
-        postId: true,
-      },
-    });
+    const comment = await this.database.db
+      .select({
+        id: comments.id,
+        body: comments.body,
+        authorId: comments.authorId,
+        postId: comments.postId,
+      })
+      .from(comments)
+      .where(eq(comments.id, id))
+      .limit(1);
+
+    if (comment.length === 0) {
+      throw new Error('Comment not found');
+    }
+
+    return comment[0];
   }
 }

@@ -1,55 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { DatabaseService } from '../database/database.service';
 import stringToSlug from '../utils/stringToSlug';
 import { CreateTag } from './dto/create-tags.dto';
+import { tags, postTags } from '../database/schema';
+import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class TagsService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private database: DatabaseService) {}
 
   async getTags() {
-    return this.prismaService.tag.findMany({
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      },
-    });
+    return this.database.db
+      .select({
+        id: tags.id,
+        name: tags.name,
+        slug: tags.slug,
+      })
+      .from(tags);
   }
 
   async createTag(tagInput: CreateTag) {
     // check if tag already exists
-    const tag = await this.prismaService.tag.findUnique({
-      where: {
-        name: tagInput.name,
-      },
-    });
+    const existingTag = await this.database.db
+      .select()
+      .from(tags)
+      .where(eq(tags.name, tagInput.name))
+      .limit(1);
 
-    if (tag) return tag;
+    if (existingTag.length > 0) return existingTag[0];
 
-    return await this.prismaService.tag.create({
-      data: {
+    const newTag = await this.database.db
+      .insert(tags)
+      .values({
         name: tagInput.name,
         description: tagInput.name,
         slug: stringToSlug(tagInput.name),
-      },
-    });
+      })
+      .returning();
+
+    return newTag[0];
   }
 
   async getTagsByPostId(postId: string) {
-    return await this.prismaService.tag.findMany({
-      where: {
-        post: {
-          some: {
-            id: postId,
-          },
-        },
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      },
-    });
+    return await this.database.db
+      .select({
+        id: tags.id,
+        name: tags.name,
+        slug: tags.slug,
+      })
+      .from(tags)
+      .innerJoin(postTags, eq(tags.id, postTags.tagId))
+      .where(eq(postTags.postId, postId));
   }
 }

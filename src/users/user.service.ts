@@ -1,10 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { randomBytes, pbkdf2Sync } from 'crypto';
 import * as jwt from 'jsonwebtoken';
-import { PrismaService } from '../database/prisma.service';
+import { DatabaseService } from '../database/database.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { users, follows } from '../database/schema';
+import { eq, and } from 'drizzle-orm';
 
 const select = {
   id: true,
@@ -16,7 +18,7 @@ const select = {
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private database: DatabaseService) {}
 
   async createUser(dto: CreateUserDto) {
     const { email, password, username } = dto;
@@ -25,50 +27,51 @@ export class UserService {
     const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
     // query user with email
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+    const user = await this.database.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
 
-    if (user) {
+    if (user.length > 0) {
       throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
     }
 
-    const newUser = await this.prisma.user.create({
-      data: {
+    const newUser = await this.database.db
+      .insert(users)
+      .values({
         username,
         email,
         salt,
         hash,
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-      },
-    });
+      })
+      .returning({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+      });
 
-    return newUser;
+    return newUser[0];
   }
 
   async login(dto: LoginUserDto) {
     const { email, password } = dto;
 
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+    const user = await this.database.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
 
-    if (!user) {
+    if (user.length === 0) {
       throw new HttpException(
         'Invalid email or password',
         HttpStatus.UNAUTHORIZED,
       );
     }
 
-    const { salt, hash: userHash, ...result } = user;
+    const userRecord = user[0];
+    const { salt, hash: userHash, ...result } = userRecord;
     const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
     if (hash !== userHash) {
@@ -77,7 +80,7 @@ export class UserService {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    const token = this.generateJWT(user);
+    const token = this.generateJWT(userRecord);
 
     return {
       ...result,
@@ -86,91 +89,100 @@ export class UserService {
   }
 
   async getUserById(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        bio: true,
-        image: true,
-      },
-    });
+    const user = await this.database.db
+      .select({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        bio: users.bio,
+        image: users.image,
+      })
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
 
-    if (!user) {
+    if (user.length === 0) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
 
-    return user;
+    return user[0];
   }
 
   async getUserByUsername(username: string) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        username,
-      },
-      select,
-    });
+    const user = await this.database.db
+      .select({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        bio: users.bio,
+        image: users.image,
+      })
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
 
-    if (!user) {
+    if (user.length === 0) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
 
-    return user;
+    return user[0];
   }
 
   async updateUserById(id: string, data: UpdateUserDto) {
-    const user = await this.prisma.user.update({
-      where: {
-        id,
-      },
-      data,
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        bio: true,
-        image: true,
-      },
-    });
+    const user = await this.database.db
+      .update(users)
+      .set(data)
+      .where(eq(users.id, id))
+      .returning({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        bio: users.bio,
+        image: users.image,
+      });
 
-    return user;
+    return user[0];
   }
 
   async getProfileUser(username: string, currentUser?: string) {
     let following = false;
-    const user = await this.prisma.user.findUnique({
-      where: {
-        username,
-      },
-      select: {
-        ...select,
-      },
-    });
+    const user = await this.database.db
+      .select({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        bio: users.bio,
+        image: users.image,
+      })
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
+
+    if (user.length === 0) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+
+    const userRecord = user[0];
 
     if (currentUser) {
-      const follower = await this.prisma.follows.findUnique({
-        where: {
-          followerId_followingId: {
-            followerId: currentUser,
-            followingId: user.id,
-          },
-        },
-      });
+      const follower = await this.database.db
+        .select()
+        .from(follows)
+        .where(
+          and(
+            eq(follows.followerId, currentUser),
+            eq(follows.followingId, userRecord.id)
+          )
+        )
+        .limit(1);
 
-      if (follower) {
+      if (follower.length > 0) {
         following = true;
       }
     }
 
-    if (!user) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
-
     return {
-      ...user,
+      ...userRecord,
       following,
     };
   }
@@ -178,23 +190,25 @@ export class UserService {
   async followUser(data: { followerId: string; followingId: string }) {
     try {
       // check if it is already following
-      const follower = await this.prisma.follows.findUnique({
-        where: {
-          followerId_followingId: {
-            followerId: data.followerId,
-            followingId: data.followingId,
-          },
-        },
-      });
+      const follower = await this.database.db
+        .select()
+        .from(follows)
+        .where(
+          and(
+            eq(follows.followerId, data.followerId),
+            eq(follows.followingId, data.followingId)
+          )
+        )
+        .limit(1);
 
-      if (follower) return true;
+      if (follower.length > 0) return true;
 
-      await this.prisma.follows.create({
-        data: {
+      await this.database.db
+        .insert(follows)
+        .values({
           followerId: data.followerId,
           followingId: data.followingId,
-        },
-      });
+        });
 
       return true;
     } catch (error) {
@@ -204,14 +218,16 @@ export class UserService {
 
   async unFollowUser(data: { followerId: string; followingId: string }) {
     try {
-      await this.prisma.follows.delete({
-        where: {
-          followerId_followingId: {
-            followerId: data.followerId,
-            followingId: data.followingId,
-          },
-        },
-      });
+      await this.database.db
+        .delete(follows)
+        .where(
+          and(
+            eq(follows.followerId, data.followerId),
+            eq(follows.followingId, data.followingId)
+          )
+        );
+
+      return true;
     } catch (error) {
       return true;
     }
