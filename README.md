@@ -144,7 +144,6 @@ Required environment variables:
 
 ```bash
 DATABASE_URL=postgresql://username:password@localhost:5432/database_name
-DIRECT_URL=postgresql://username:password@localhost:5432/database_name
 JWT_SECRET=your-secret-key
 ```
 
