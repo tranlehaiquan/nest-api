@@ -7,7 +7,7 @@ type User {
   username: String!
   email: String!
   bio: String!
-  image: String!
+  image: String
 }
 
 type UserLogin {
@@ -15,7 +15,7 @@ type UserLogin {
   username: String!
   email: String!
   bio: String!
-  image: String!
+  image: String
   token: String!
 }
 
@@ -24,7 +24,7 @@ type ProfileUser {
   username: String!
   email: String!
   bio: String!
-  image: String!
+  image: String
   following: Boolean
 }
 

@@ -14,7 +14,7 @@ class User {
   @Field(() => String)
   bio: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   image: string;
 }
 

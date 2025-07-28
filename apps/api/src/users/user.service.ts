@@ -44,11 +44,15 @@ export class UserService {
         email,
         salt,
         hash,
+        bio: '',
+        image: '',
       })
       .returning({
         id: users.id,
         username: users.username,
         email: users.email,
+        bio: users.bio,
+        image: users.image,
       });
 
     return newUser[0];

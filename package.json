@@ -7,7 +7,8 @@
     "dev": "turbo dev --log-order=stream",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "check:write": "turbo run check:write"
   },
   "devDependencies": {
     "prettier": "^3.4.2",
