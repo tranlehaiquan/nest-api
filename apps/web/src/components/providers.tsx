@@ -1,14 +1,14 @@
 "use client";
-
-import { ApolloProvider } from "@apollo/client";
 import type { ReactNode } from "react";
-import { apolloClient } from "~/lib/apollo-client";
+import { Toaster } from "~/components/ui/sonner";
 import { AuthProvider } from "~/lib/auth/auth-context";
+import QueryProvider from "./queryProvider/QueryProvider";
 
 export function Providers({ children }: { children: ReactNode }) {
-	return (
-		<ApolloProvider client={apolloClient}>
-			<AuthProvider>{children}</AuthProvider>
-		</ApolloProvider>
-	);
+  return (
+    <QueryProvider>
+      <AuthProvider>{children}</AuthProvider>
+      <Toaster />
+    </QueryProvider>
+  );
 }

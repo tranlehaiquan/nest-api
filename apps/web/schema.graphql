@@ -1,0 +1,80 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Articles {
+  body: String!
+  comments: [Comment!]!
+  description: String!
+  id: ID!
+  tags: [Tags!]!
+  title: String!
+}
+
+type Comment {
+  author: User!
+  authorId: ID!
+  body: String!
+  id: ID!
+}
+
+type CommentDeleteResult {
+  id: ID!
+}
+
+type Mutation {
+  create(name: String!): Tags!
+  createArticle(body: String!, description: String!, tags: [String!], title: String!): Articles!
+  createComment(body: String!, postId: ID!): Comment!
+  deleteArticle(id: String!): Articles!
+  followUser(followingId: ID!): Boolean!
+  register(email: String!, password: String!, username: String!): User!
+  removeComment(commentId: ID!): CommentDeleteResult!
+  unFollowUser(followingId: ID!): Boolean!
+  updateArticle(id: ID!): Articles!
+  updateUser(bio: String, email: String, image: String): User!
+}
+
+type ProfileUser {
+  bio: String!
+  email: String!
+  following: Boolean
+  id: String!
+  image: String
+  username: String!
+}
+
+type Query {
+  articleById(id: String!): Articles!
+  articles: [Articles!]!
+  getCommentsByArticleId(id: String!): [Comment!]!
+  getUser(username: String!): ProfileUser!
+  login(email: String!, password: String!): UserLogin!
+  tags: [Tags!]!
+  whoAmI: User!
+}
+
+type Tags {
+  description: String!
+  id: ID!
+  name: String!
+  slug: String!
+}
+
+type User {
+  bio: String!
+  email: String!
+  id: String!
+  image: String
+  username: String!
+}
+
+type UserLogin {
+  bio: String!
+  email: String!
+  id: String!
+  image: String
+  token: String!
+  username: String!
+}
