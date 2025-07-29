@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useLazyQuery } from '@apollo/client';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useLazyQuery } from "@apollo/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import {
 	Card,
@@ -14,7 +14,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
 import {
 	Form,
 	FormControl,
@@ -23,13 +22,14 @@ import {
 	FormLabel,
 	FormMessage,
 } from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { useAuth } from "~/lib/auth/auth-context";
+import { LOGIN_MUTATION } from "~/lib/graphql/mutations";
 import { cn } from "~/lib/utils";
-import { LOGIN_MUTATION } from '~/lib/graphql/mutations';
-import { useAuth } from '~/lib/auth/auth-context';
 
 const loginSchema = z.object({
-	email: z.string().email('Please enter a valid email address'),
-	password: z.string().min(1, 'Password is required'),
+	email: z.string().email("Please enter a valid email address"),
+	password: z.string().min(1, "Password is required"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -41,13 +41,13 @@ export function LoginForm({
 	const { login } = useAuth();
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const successMessage = searchParams.get('message');
+	const successMessage = searchParams.get("message");
 
 	const form = useForm<LoginFormValues>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
-			email: '',
-			password: '',
+			email: "",
+			password: "",
 		},
 	});
 
@@ -57,19 +57,19 @@ export function LoginForm({
 			// Extract token and user data
 			const { token, ...userData } = loginData;
 			await login(userData, token);
-			router.push('/'); // Redirect to home page after successful login
+			router.push("/"); // Redirect to home page after successful login
 		},
 		onError: (error) => {
-			form.setError('root', {
-				message: error.message || 'Login failed. Please try again.'
+			form.setError("root", {
+				message: error.message || "Login failed. Please try again.",
 			});
-		}
+		},
 	});
 
 	const onSubmit = async (values: LoginFormValues) => {
 		try {
 			await loginMutation({
-				variables: { email: values.email, password: values.password }
+				variables: { email: values.email, password: values.password },
 			});
 		} catch (err) {
 			// Error handling is done in onError callback
@@ -80,7 +80,7 @@ export function LoginForm({
 	useEffect(() => {
 		if (successMessage) {
 			const timer = setTimeout(() => {
-				router.replace('/login');
+				router.replace("/login");
 			}, 5000);
 			return () => clearTimeout(timer);
 		}
@@ -145,7 +145,7 @@ export function LoginForm({
 									)}
 								/>
 								<Button type="submit" className="w-full" disabled={loading}>
-									{loading ? 'Logging in...' : 'Login'}
+									{loading ? "Logging in..." : "Login"}
 								</Button>
 							</div>
 							<div className="text-center text-sm">

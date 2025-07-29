@@ -1,13 +1,18 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useMutation } from '@apollo/client';
-import { useRouter } from 'next/navigation';
+import { useMutation } from "@apollo/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "~/components/ui/card";
 import {
 	Form,
 	FormControl,
@@ -16,19 +21,20 @@ import {
 	FormLabel,
 	FormMessage,
 } from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { REGISTER_MUTATION } from "~/lib/graphql/mutations";
 import { cn } from "~/lib/utils";
-import { REGISTER_MUTATION } from '~/lib/graphql/mutations';
 
 const signupSchema = z.object({
 	username: z
 		.string()
-		.min(3, 'Username must be at least 3 characters')
-		.max(30, 'Username must be less than 20 characters'),
-	email: z.string().email('Please enter a valid email address'),
+		.min(3, "Username must be at least 3 characters")
+		.max(30, "Username must be less than 20 characters"),
+	email: z.string().email("Please enter a valid email address"),
 	password: z
 		.string()
-		.min(6, 'Password must be at least 6 characters')
-		.max(100, 'Password must be less than 100 characters'),
+		.min(6, "Password must be at least 6 characters")
+		.max(100, "Password must be less than 100 characters"),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -42,9 +48,9 @@ export function SignupForm({
 	const form = useForm<SignupFormValues>({
 		resolver: zodResolver(signupSchema),
 		defaultValues: {
-			username: '',
-			email: '',
-			password: '',
+			username: "",
+			email: "",
+			password: "",
 		},
 	});
 
@@ -53,24 +59,24 @@ export function SignupForm({
 			// Show success message and redirect
 			form.reset();
 			setTimeout(() => {
-				router.push('/login?message=Registration successful! Please log in.');
+				router.push("/login?message=Registration successful! Please log in.");
 			}, 1000);
 		},
 		onError: (error) => {
-			form.setError('root', {
-				message: error.message || 'Registration failed. Please try again.'
+			form.setError("root", {
+				message: error.message || "Registration failed. Please try again.",
 			});
-		}
+		},
 	});
 
 	const onSubmit = async (values: SignupFormValues) => {
 		try {
 			await registerMutation({
-				variables: { 
-					username: values.username, 
-					email: values.email, 
-					password: values.password 
-				}
+				variables: {
+					username: values.username,
+					email: values.email,
+					password: values.password,
+				},
 			});
 		} catch (err) {
 			// Error handling is done in onError callback
@@ -115,11 +121,7 @@ export function SignupForm({
 										<FormItem>
 											<FormLabel>Username</FormLabel>
 											<FormControl>
-												<Input
-													type="text"
-													placeholder="johndoe"
-													{...field}
-												/>
+												<Input type="text" placeholder="johndoe" {...field} />
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -160,7 +162,7 @@ export function SignupForm({
 									)}
 								/>
 								<Button type="submit" className="w-full" disabled={loading}>
-									{loading ? 'Creating account...' : 'Sign up'}
+									{loading ? "Creating account..." : "Sign up"}
 								</Button>
 							</div>
 							<div className="text-center text-sm">

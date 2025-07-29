@@ -175,8 +175,8 @@ export class UserService {
         .where(
           and(
             eq(follows.followerId, currentUser),
-            eq(follows.followingId, userRecord.id)
-          )
+            eq(follows.followingId, userRecord.id),
+          ),
         )
         .limit(1);
 
@@ -200,19 +200,17 @@ export class UserService {
         .where(
           and(
             eq(follows.followerId, data.followerId),
-            eq(follows.followingId, data.followingId)
-          )
+            eq(follows.followingId, data.followingId),
+          ),
         )
         .limit(1);
 
       if (follower.length > 0) return true;
 
-      await this.database.db
-        .insert(follows)
-        .values({
-          followerId: data.followerId,
-          followingId: data.followingId,
-        });
+      await this.database.db.insert(follows).values({
+        followerId: data.followerId,
+        followingId: data.followingId,
+      });
 
       return true;
     } catch (error) {
@@ -227,8 +225,8 @@ export class UserService {
         .where(
           and(
             eq(follows.followerId, data.followerId),
-            eq(follows.followingId, data.followingId)
-          )
+            eq(follows.followingId, data.followingId),
+          ),
         );
 
       return true;

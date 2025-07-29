@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const LOGIN_MUTATION = gql`
   query Login($email: String!, $password: String!) {
@@ -35,4 +35,4 @@ export const WHO_AM_I_QUERY = gql`
       image
     }
   }
-`; 
+`;
