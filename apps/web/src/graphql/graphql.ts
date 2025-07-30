@@ -197,15 +197,15 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, username: string, email: string, bio: string, image?: string | null } };
 
-export type WhoAmIQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type WhoAmIQuery = { __typename?: 'Query', whoAmI: { __typename?: 'User', id: string, username: string, email: string, bio: string, image?: string | null } };
-
 export type ArticlesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ArticlesQuery = { __typename?: 'Query', articles: Array<{ __typename?: 'Articles', id: string, title: string, description: string, body: string }> };
+
+export type WhoAmIQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type WhoAmIQuery = { __typename?: 'Query', whoAmI: { __typename?: 'User', id: string, username: string, email: string, bio: string, image?: string | null } };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -249,6 +249,16 @@ export const RegisterDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<RegisterMutation, RegisterMutationVariables>;
+export const ArticlesDocument = new TypedDocumentString(`
+    query articles {
+  articles {
+    id
+    title
+    description
+    body
+  }
+}
+    `) as unknown as TypedDocumentString<ArticlesQuery, ArticlesQueryVariables>;
 export const WhoAmIDocument = new TypedDocumentString(`
     query WhoAmI {
   whoAmI {
@@ -260,13 +270,3 @@ export const WhoAmIDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<WhoAmIQuery, WhoAmIQueryVariables>;
-export const ArticlesDocument = new TypedDocumentString(`
-    query articles {
-  articles {
-    id
-    title
-    description
-    body
-  }
-}
-    `) as unknown as TypedDocumentString<ArticlesQuery, ArticlesQueryVariables>;

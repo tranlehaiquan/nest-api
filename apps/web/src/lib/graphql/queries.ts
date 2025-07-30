@@ -10,3 +10,15 @@ export const articlesQueryDocument = graphql(`
     }
   }
 `);
+
+export const WHO_AM_I_QUERY = graphql(`
+  query WhoAmI {
+    whoAmI {
+      id
+      username
+      email
+      bio
+      image
+    }
+  }
+`);

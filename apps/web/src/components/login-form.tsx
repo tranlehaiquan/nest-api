@@ -26,7 +26,7 @@ import { LOGIN_MUTATION } from "~/lib/graphql/mutations";
 import { cn } from "~/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import gqlClient from "~/lib/graphql/client";
+import { execute } from "~/graphql/execute";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -52,28 +52,9 @@ export function LoginForm({
     },
   });
 
-  const { mutateAsync: loginMutation, isPending } = useMutation({
-    mutationFn: async (variables: { email: string; password: string }) => {
-      const response = await gqlClient.request(LOGIN_MUTATION, variables);
-      // const { login } = response;
-      // Extract token and user data
-      const { token, ...userData } = login;
-      await login(userData, token);
-      return login;
-    },
-    onError: (error) => {
-      form.setError("root", {
-        message: error.message || "Login failed. Please try again.",
-      });
-    },
-  });
-
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      const a = await loginMutation({
-        email: values.email,
-        password: values.password,
-      });
+      const user = await login(values.email, values.password);
     } catch (err) {
       toast.error("Login failed. Please check your credentials and try again.");
     }
