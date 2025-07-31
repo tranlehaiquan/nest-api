@@ -11,6 +11,7 @@
     "check:write": "turbo run check:write"
   },
   "devDependencies": {
+    "@nestjs/cli": "^11.0.7",
     "prettier": "^3.4.2",
     "turbo": "^2.5.5",
     "typescript": "5.8.3"
