@@ -29,6 +29,7 @@ type Mutation {
   createComment(body: String!, postId: ID!): Comment!
   deleteArticle(id: String!): Articles!
   followUser(followingId: ID!): Boolean!
+  login(email: String!, password: String!): UserLogin!
   register(email: String!, password: String!, username: String!): User!
   removeComment(commentId: ID!): CommentDeleteResult!
   unFollowUser(followingId: ID!): Boolean!
@@ -50,7 +51,6 @@ type Query {
   articles: [Articles!]!
   getCommentsByArticleId(id: String!): [Comment!]!
   getUser(username: String!): ProfileUser!
-  login(email: String!, password: String!): UserLogin!
   tags: [Tags!]!
   whoAmI: User!
 }

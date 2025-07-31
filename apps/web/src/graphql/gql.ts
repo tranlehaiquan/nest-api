@@ -15,13 +15,13 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  query Login($email: String!, $password: String!) {\n    login(email: $email, password: $password) {\n      id\n      username\n      email\n      bio\n      image\n      token\n    }\n  }\n": typeof types.LoginDocument,
+    "\n  mutation Login($email: String!, $password: String!) {\n    login(email: $email, password: $password) {\n      id\n      username\n      email\n      bio\n      image\n      token\n    }\n  }\n": typeof types.LoginDocument,
     "\n  mutation Register($username: String!, $email: String!, $password: String!) {\n    register(username: $username, email: $email, password: $password) {\n      id\n      username\n      email\n      bio\n      image\n    }\n  }\n": typeof types.RegisterDocument,
     "\n  query articles {\n    articles {\n      id\n      title\n      description\n      body\n    }\n  }\n": typeof types.ArticlesDocument,
     "\n  query WhoAmI {\n    whoAmI {\n      id\n      username\n      email\n      bio\n      image\n    }\n  }\n": typeof types.WhoAmIDocument,
 };
 const documents: Documents = {
-    "\n  query Login($email: String!, $password: String!) {\n    login(email: $email, password: $password) {\n      id\n      username\n      email\n      bio\n      image\n      token\n    }\n  }\n": types.LoginDocument,
+    "\n  mutation Login($email: String!, $password: String!) {\n    login(email: $email, password: $password) {\n      id\n      username\n      email\n      bio\n      image\n      token\n    }\n  }\n": types.LoginDocument,
     "\n  mutation Register($username: String!, $email: String!, $password: String!) {\n    register(username: $username, email: $email, password: $password) {\n      id\n      username\n      email\n      bio\n      image\n    }\n  }\n": types.RegisterDocument,
     "\n  query articles {\n    articles {\n      id\n      title\n      description\n      body\n    }\n  }\n": types.ArticlesDocument,
     "\n  query WhoAmI {\n    whoAmI {\n      id\n      username\n      email\n      bio\n      image\n    }\n  }\n": types.WhoAmIDocument,
@@ -30,7 +30,7 @@ const documents: Documents = {
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query Login($email: String!, $password: String!) {\n    login(email: $email, password: $password) {\n      id\n      username\n      email\n      bio\n      image\n      token\n    }\n  }\n"): typeof import('./graphql').LoginDocument;
+export function graphql(source: "\n  mutation Login($email: String!, $password: String!) {\n    login(email: $email, password: $password) {\n      id\n      username\n      email\n      bio\n      image\n      token\n    }\n  }\n"): typeof import('./graphql').LoginDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -22,11 +22,8 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { useAuth } from "~/lib/auth/auth-context";
-import { LOGIN_MUTATION } from "~/lib/graphql/mutations";
 import { cn } from "~/lib/utils";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { execute } from "~/graphql/execute";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -39,7 +36,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { login } = useAuth();
+  const { login, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const successMessage = searchParams.get("message");
@@ -128,8 +125,8 @@ export function LoginForm({
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={isPending}>
-                  {isPending ? "Logging in..." : "Login"}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
               <div className="text-center text-sm">

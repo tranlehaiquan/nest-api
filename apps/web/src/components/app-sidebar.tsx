@@ -1,5 +1,6 @@
 "use client";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   AudioWaveform,
   BookOpen,
@@ -25,7 +26,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "~/components/ui/sidebar";
-import { useAuth } from "~/lib/auth/auth-context";
+import { whoAmIQueryOption } from "~/lib/graphql/queryOption";
 
 // This is sample data.
 const data = {
@@ -153,7 +154,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
+  const { data: user } = useSuspenseQuery(whoAmIQueryOption);
 
   return (
     <Sidebar collapsible="icon" {...props}>

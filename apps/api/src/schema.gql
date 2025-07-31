@@ -57,7 +57,6 @@ type CommentDeleteResult {
 
 type Query {
   whoAmI: User!
-  login(email: String!, password: String!): UserLogin!
   getUser(username: String!): ProfileUser!
   articles: [Articles!]!
   articleById(id: String!): Articles!
@@ -66,6 +65,7 @@ type Query {
 }
 
 type Mutation {
+  login(email: String!, password: String!): UserLogin!
   register(username: String!, email: String!, password: String!): User!
   updateUser(email: String, bio: String, image: String): User!
   followUser(followingId: ID!): Boolean!

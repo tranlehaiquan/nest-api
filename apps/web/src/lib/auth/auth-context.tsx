@@ -1,39 +1,62 @@
 "use client";
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { whoAmIQueryOption } from "../graphql/queryOption";
-import { login, logout } from "./actions";
-
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  bio: string;
-  image?: string | null;
-}
+import { login, logout, register } from "./actions";
+import { useRouter } from "next/navigation";
 
 interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<User>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  register: (username: string, email: string, password: string) => Promise<void>;
   isLoading?: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { data: user } = useSuspenseQuery(whoAmIQueryOption);
-  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const onLogout = async () => {
-    await logout();
-  };
-  const onLogin = async (email: string, password: string) => {
-    return await login(email, password);
+    setIsLoading(true);
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoading(false);
+      router.push("/login");
+    }
   };
 
+  const onLogin = async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      await login(email, password);
+      router.push("/");
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onRegister = async (username: string, email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      await register(username, email, password);
+    } catch (error) {
+      console.error("Registration failed:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login: onLogin, logout: onLogout }}>
+    <AuthContext.Provider
+      value={{ login: onLogin, logout: onLogout, register: onRegister, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

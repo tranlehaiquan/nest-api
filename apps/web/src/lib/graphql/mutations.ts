@@ -1,7 +1,7 @@
 import { graphql } from "~/graphql";
 
 export const LOGIN_MUTATION = graphql(`
-  query Login($email: String!, $password: String!) {
+  mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       id
       username

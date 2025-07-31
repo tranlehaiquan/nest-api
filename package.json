@@ -8,6 +8,7 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "codegen": "turbo run codegen",
     "check:write": "turbo run check:write"
   },
   "devDependencies": {

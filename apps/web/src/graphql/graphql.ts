@@ -46,6 +46,7 @@ export type Mutation = {
   createComment: Comment;
   deleteArticle: Articles;
   followUser: Scalars['Boolean']['output'];
+  login: UserLogin;
   register: User;
   removeComment: CommentDeleteResult;
   unFollowUser: Scalars['Boolean']['output'];
@@ -80,6 +81,12 @@ export type MutationDeleteArticleArgs = {
 
 export type MutationFollowUserArgs = {
   followingId: Scalars['ID']['input'];
+};
+
+
+export type MutationLoginArgs = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 
@@ -127,7 +134,6 @@ export type Query = {
   articles: Array<Articles>;
   getCommentsByArticleId: Array<Comment>;
   getUser: ProfileUser;
-  login: UserLogin;
   tags: Array<Tags>;
   whoAmI: User;
 };
@@ -145,12 +151,6 @@ export type QueryGetCommentsByArticleIdArgs = {
 
 export type QueryGetUserArgs = {
   username: Scalars['String']['input'];
-};
-
-
-export type QueryLoginArgs = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
 };
 
 export type Tags = {
@@ -180,13 +180,13 @@ export type UserLogin = {
   username: Scalars['String']['output'];
 };
 
-export type LoginQueryVariables = Exact<{
+export type LoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 }>;
 
 
-export type LoginQuery = { __typename?: 'Query', login: { __typename?: 'UserLogin', id: string, username: string, email: string, bio: string, image?: string | null, token: string } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserLogin', id: string, username: string, email: string, bio: string, image?: string | null, token: string } };
 
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String']['input'];
@@ -227,7 +227,7 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const LoginDocument = new TypedDocumentString(`
-    query Login($email: String!, $password: String!) {
+    mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
     id
     username
@@ -237,7 +237,7 @@ export const LoginDocument = new TypedDocumentString(`
     token
   }
 }
-    `) as unknown as TypedDocumentString<LoginQuery, LoginQueryVariables>;
+    `) as unknown as TypedDocumentString<LoginMutation, LoginMutationVariables>;
 export const RegisterDocument = new TypedDocumentString(`
     mutation Register($username: String!, $email: String!, $password: String!) {
   register(username: $username, email: $email, password: $password) {

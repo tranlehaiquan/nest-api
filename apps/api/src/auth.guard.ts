@@ -4,6 +4,8 @@ import * as jwt from 'jsonwebtoken';
 import { IS_AUTH_OPTIONAL } from './decorator/user.decorator';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+const cookieTokenName = 'jwt-token';
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
@@ -14,7 +16,10 @@ export class AuthGuard implements CanActivate {
       GqlExecutionContext.create(context).getContext().req;
 
     try {
-      const token = (request.headers.authorization as string).split(' ')[1];
+      const tokenInCookie = request.cookies[cookieTokenName];
+      const token =
+        (request.headers.authorization as string).split(' ')[1] ||
+        tokenInCookie;
       const decode = jwt.verify(token, process.env.JWT_SECRET);
       request.user = decode;
 

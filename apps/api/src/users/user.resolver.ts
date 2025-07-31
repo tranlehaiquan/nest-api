@@ -19,7 +19,7 @@ class UserResolver {
     return this.userService.getUserById(user.id);
   }
 
-  @Query(() => UserLogin)
+  @Mutation(() => UserLogin)
   login(@Args() login: LoginUserDto) {
     return this.userService.login(login);
   }
