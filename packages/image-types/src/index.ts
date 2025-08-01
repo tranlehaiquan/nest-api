@@ -1,6 +1,6 @@
 // Image Service Request/Response Types
 export interface UploadImageRequest {
-  file: Buffer;
+  file: Buffer | { data: number[]; type: string } | any;
   filename: string;
 }
 
@@ -47,6 +47,8 @@ export type ImageServicePatterns = {
   get_image: GetImageRequest;
   delete_image: DeleteImageRequest;
   health_check: void;
+  list_images: void;
+  get_storage_info: void;
 };
 
 export type ImageServiceResponses = {
@@ -54,4 +56,19 @@ export type ImageServiceResponses = {
   get_image: GetImageResponse;
   delete_image: DeleteImageResponse;
   health_check: HealthCheckResponse;
-}; 
+  list_images: {
+    success: boolean;
+    images: Array<{
+      imageId: string;
+      filename: string;
+      size: string;
+      format: string;
+    }>;
+  };
+  get_storage_info: {
+    success: boolean;
+    totalFiles: number;
+    totalSize: string;
+    uploadsDir: string;
+  };
+};

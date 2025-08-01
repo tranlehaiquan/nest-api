@@ -6,7 +6,7 @@ import { Logger } from '@nestjs/common';
 async function bootstrap() {
   const port = parseInt(process.env.IMAGE_SERVICE_PORT || '3001');
   const logger = new Logger('ImageService');
-  
+
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {

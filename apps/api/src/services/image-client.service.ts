@@ -1,5 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  Transport,
+} from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import {
   UploadImageRequest,
@@ -9,47 +13,140 @@ import {
   DeleteImageRequest,
   DeleteImageResponse,
   HealthCheckResponse,
-} from '../types/image.types';
+} from '@nest-api/image-types';
 
 @Injectable()
 export class ImageClientService {
-  constructor(
-    @Inject('IMAGE_SERVICE') private imageServiceClient: ClientProxy,
-  ) {}
+  private readonly logger = new Logger(ImageClientService.name);
+  private readonly client: ClientProxy;
+
+  constructor() {
+    this.client = ClientProxyFactory.create({
+      transport: Transport.TCP,
+      options: {
+        host: process.env.IMAGE_SERVICE_HOST || 'localhost',
+        port: parseInt(process.env.IMAGE_SERVICE_PORT || '3001'),
+      },
+    });
+  }
+
+  async onModuleInit() {
+    await this.client.connect();
+    this.logger.log('Connected to Image Service');
+  }
+
+  async onModuleDestroy() {
+    await this.client.close();
+    this.logger.log('Disconnected from Image Service');
+  }
 
   async uploadImage(data: UploadImageRequest): Promise<UploadImageResponse> {
-    return firstValueFrom(
-      this.imageServiceClient.send<UploadImageResponse, UploadImageRequest>(
-        'upload_image',
-        data,
-      ),
-    );
+    try {
+      this.logger.log(`Uploading image: ${data.filename}`);
+      return await firstValueFrom(
+        this.client.send<UploadImageResponse>('upload_image', data),
+      );
+    } catch (error) {
+      this.logger.error(`Failed to upload image: ${error.message}`);
+      return {
+        success: false,
+        imageId: '',
+        filename: data.filename,
+        url: '',
+        message: `Failed to upload image: ${error.message}`,
+      };
+    }
   }
 
-  async getImage(data: GetImageRequest): Promise<GetImageResponse> {
-    return firstValueFrom(
-      this.imageServiceClient.send<GetImageResponse, GetImageRequest>(
-        'get_image',
-        data,
-      ),
-    );
+  async getImage(imageId: string): Promise<GetImageResponse> {
+    try {
+      this.logger.log(`Getting image: ${imageId}`);
+      return await firstValueFrom(
+        this.client.send<GetImageResponse>('get_image', { imageId }),
+      );
+    } catch (error) {
+      this.logger.error(`Failed to get image: ${error.message}`);
+      return {
+        success: false,
+        imageId,
+        url: '',
+        metadata: {
+          size: '',
+          format: '',
+          dimensions: '',
+        },
+      };
+    }
   }
 
-  async deleteImage(data: DeleteImageRequest): Promise<DeleteImageResponse> {
-    return firstValueFrom(
-      this.imageServiceClient.send<DeleteImageResponse, DeleteImageRequest>(
-        'delete_image',
-        data,
-      ),
-    );
+  async deleteImage(imageId: string): Promise<DeleteImageResponse> {
+    try {
+      this.logger.log(`Deleting image: ${imageId}`);
+      return await firstValueFrom(
+        this.client.send<DeleteImageResponse>('delete_image', { imageId }),
+      );
+    } catch (error) {
+      this.logger.error(`Failed to delete image: ${error.message}`);
+      return {
+        success: false,
+        imageId,
+        message: `Failed to delete image: ${error.message}`,
+      };
+    }
   }
 
   async healthCheck(): Promise<HealthCheckResponse> {
-    return firstValueFrom(
-      this.imageServiceClient.send<HealthCheckResponse, void>(
-        'health_check',
-        undefined,
-      ),
-    );
+    try {
+      this.logger.log('Checking image service health');
+      return await firstValueFrom(
+        this.client.send<HealthCheckResponse>('health_check', {}),
+      );
+    } catch (error) {
+      this.logger.error(`Health check failed: ${error.message}`);
+      return {
+        message: `Image service health check failed: ${error.message}`,
+      };
+    }
+  }
+
+  async listImages(): Promise<{
+    success: boolean;
+    images: Array<{
+      imageId: string;
+      filename: string;
+      size: string;
+      format: string;
+    }>;
+  }> {
+    try {
+      this.logger.log('Listing images');
+      return await firstValueFrom(this.client.send('list_images', {}));
+    } catch (error) {
+      this.logger.error(`Failed to list images: ${error.message}`);
+      return {
+        success: false,
+        images: [],
+      };
+    }
+  }
+
+  async getStorageInfo(): Promise<{
+    success: boolean;
+    totalFiles: number;
+    totalSize: string;
+    uploadsDir: string;
+  }> {
+    try {
+      this.logger.log('Getting storage info');
+      return await firstValueFrom(this.client.send('get_storage_info', {}));
+    } catch (error) {
+      this.logger.error(`Failed to get storage info: ${error.message}`);
+      return {
+        success: false,
+        totalFiles: 0,
+        totalSize: '0MB',
+        uploadsDir: '',
+      };
+    }
   }
 }

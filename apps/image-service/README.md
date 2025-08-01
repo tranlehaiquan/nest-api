@@ -96,3 +96,181 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+# Image Service
+
+A microservice for handling image uploads, storage, and management with local file storage.
+
+## Features
+
+- **Local File Storage**: Images are stored locally in the `uploads/` directory
+- **Image Upload**: Upload images with unique IDs and metadata
+- **Image Retrieval**: Get image information and metadata
+- **Image Deletion**: Remove images from local storage
+- **Storage Management**: List all images and get storage statistics
+
+## Local Storage
+
+Images are stored in the `uploads/` directory at the root of the service. The service automatically creates this directory if it doesn't exist.
+
+### File Naming Convention
+
+- Images are stored with unique IDs: `img_{timestamp}_{randomString}.{extension}`
+- Original filenames are preserved in metadata
+- File extensions are maintained from the original upload
+
+### Storage Structure
+
+```
+uploads/
+├── img_1703123456789_abc123def.jpg
+├── img_1703123456790_xyz789ghi.png
+└── ...
+```
+
+## API Endpoints
+
+### Microservice Patterns
+
+The service uses TCP microservice patterns:
+
+- `upload_image`: Upload a new image
+- `get_image`: Retrieve image information
+- `delete_image`: Delete an image
+- `list_images`: List all stored images
+- `get_storage_info`: Get storage statistics
+- `health_check`: Service health check
+
+### Request/Response Types
+
+#### Upload Image
+
+```typescript
+interface UploadImageRequest {
+  file: Buffer;
+  filename: string;
+}
+
+interface UploadImageResponse {
+  success: boolean;
+  imageId: string;
+  filename: string;
+  url: string;
+  message: string;
+}
+```
+
+#### Get Image
+
+```typescript
+interface GetImageRequest {
+  imageId: string;
+}
+
+interface GetImageResponse {
+  success: boolean;
+  imageId: string;
+  url: string;
+  metadata: {
+    size: string;
+    format: string;
+    dimensions: string;
+  };
+}
+```
+
+#### Delete Image
+
+```typescript
+interface DeleteImageRequest {
+  imageId: string;
+}
+
+interface DeleteImageResponse {
+  success: boolean;
+  imageId: string;
+  message: string;
+}
+```
+
+## Development
+
+### Prerequisites
+
+- Node.js
+- pnpm
+
+### Installation
+
+```bash
+pnpm install
+```
+
+### Running the Service
+
+```bash
+# Development mode
+pnpm run dev
+
+# Production mode
+pnpm run start:prod
+```
+
+### Environment Variables
+
+- `IMAGE_SERVICE_PORT`: Service port (default: 3001)
+- `IMAGE_SERVICE_HOST`: Service host (default: localhost)
+
+## Storage Management
+
+### List All Images
+
+Returns a list of all stored images with their metadata:
+
+```typescript
+{
+  success: boolean;
+  images: Array<{
+    imageId: string;
+    filename: string;
+    size: string;
+    format: string;
+  }>;
+}
+```
+
+### Get Storage Info
+
+Returns storage statistics:
+
+```typescript
+{
+  success: boolean;
+  totalFiles: number;
+  totalSize: string;
+  uploadsDir: string;
+}
+```
+
+## Error Handling
+
+The service includes comprehensive error handling:
+
+- File system errors are logged and returned with appropriate messages
+- Missing files return success: false with descriptive messages
+- All operations are wrapped in try-catch blocks
+
+## Security Considerations
+
+- Files are stored with unique IDs to prevent conflicts
+- Original filenames are preserved in metadata but not used for storage
+- File extensions are validated and preserved
+- No direct file system access is exposed
+
+## Future Enhancements
+
+- Image processing (resizing, compression)
+- File type validation
+- Storage quotas and limits
+- Image metadata extraction (dimensions, EXIF data)
+- Backup and archival features

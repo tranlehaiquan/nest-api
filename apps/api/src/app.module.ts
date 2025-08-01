@@ -3,26 +3,16 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
+import { ImageTestController } from './controllers/image-test.controller';
+import { ImageClientService } from './services/image-client.service';
 import { UsersModule } from './users/user.module';
 import { ArticlesModule } from './articles/articles.module';
 import { CommentsModule } from './comments/comments.module';
 import { TagsModule } from './tags/tags.module';
 import { join } from 'node:path';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ImageClientService } from './services/image-client.service';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'IMAGE_SERVICE',
-        transport: Transport.TCP,
-        options: {
-          host: 'localhost',
-          port: 3001,
-        },
-      },
-    ]),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -37,7 +27,7 @@ import { ImageClientService } from './services/image-client.service';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, ImageTestController],
   providers: [ImageClientService],
 })
 export class AppModule {}
